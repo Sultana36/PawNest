@@ -1,0 +1,310 @@
+@import "tailwindcss";
+
+@plugin "daisyui";
+
+/* ---------- DaisyUI theme: every old daisyUI button, input, card, table
+   now picks up the coffee palette automatically ---------- */
+@plugin "daisyui/theme" {
+  name: "pawnest";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: #fbf6ee;
+  --color-base-200: #f5ebdd;
+  --color-base-300: #e6d5bd;
+  --color-base-content: #2b1b14;
+
+  --color-primary: #6f4e37;
+  --color-primary-content: #fbf6ee;
+  --color-secondary: #c8a27a;
+  --color-secondary-content: #2b1b14;
+  --color-accent: #d9a066;
+  --color-accent-content: #2b1b14;
+  --color-neutral: #2b1b14;
+  --color-neutral-content: #f5ebdd;
+
+  --color-info: #7a9bae;
+  --color-info-content: #10202a;
+  --color-success: #6e8b5a;
+  --color-success-content: #f3f8ee;
+  --color-warning: #d9a066;
+  --color-warning-content: #2b1b14;
+  --color-error: #b5523b;
+  --color-error-content: #fff5f2;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.9rem;
+  --radius-box: 1.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* ---------- Design tokens (usable as bg-espresso, text-latte, font-display ...) ---------- */
+@theme {
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+
+  --color-night: #1e130e;
+  --color-espresso: #2b1b14;
+  --color-coffee: #6f4e37;
+  --color-latte: #c8a27a;
+  --color-cream: #f5ebdd;
+  --color-foam: #fbf6ee;
+  --color-caramel: #d9a066;
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-espresso);
+    background: var(--color-cream);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--color-latte);
+    color: var(--color-espresso);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-caramel);
+    outline-offset: 3px;
+  }
+
+  .btn {
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s, background-color 0.25s;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+}
+
+/* ---------- Glass and water components ---------- */
+@layer components {
+  /* Frosted glass on dark backgrounds (hero, footer) */
+  .glass-dark {
+    color: var(--color-cream);
+    background: linear-gradient(135deg, rgba(251, 246, 238, 0.14), rgba(251, 246, 238, 0.04));
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid rgba(251, 246, 238, 0.18);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+      0 24px 60px -24px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Frosted glass on cream pages (pet lists, shop, dashboards) */
+  .glass-light {
+    color: var(--color-espresso);
+    background: linear-gradient(135deg, rgba(255, 253, 249, 0.78), rgba(255, 250, 242, 0.42));
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid rgba(111, 78, 55, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 18px 44px -22px rgba(70, 40, 20, 0.38);
+  }
+
+  /* Liquid refraction: only browsers that allow SVG filters in backdrop-filter (Chrome, Edge) */
+  @supports (backdrop-filter: url(#pn-water)) {
+    .glass-water {
+      -webkit-backdrop-filter: blur(5px) url(#pn-water) saturate(150%);
+      backdrop-filter: blur(5px) url(#pn-water) saturate(150%);
+    }
+  }
+
+  /* Lifts and catches the light when hovered */
+  .glass-lift {
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s, border-color 0.45s;
+  }
+
+  .glass-lift:hover {
+    transform: translateY(-6px);
+    border-color: rgba(217, 160, 102, 0.55);
+  }
+
+  /* Pill button with a light sweep, for hero and glass surfaces */
+  .btn-glass {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    color: var(--color-cream);
+    background: rgba(251, 246, 238, 0.12);
+    border: 1px solid rgba(251, 246, 238, 0.3);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s;
+  }
+
+  .btn-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-glass:hover {
+    transform: translateY(-2px);
+    background: rgba(251, 246, 238, 0.2);
+  }
+
+  .btn-glass:hover::after {
+    transform: translateX(120%);
+  }
+
+  /* Solid light button for the one main action on dark hero sections */
+  .btn-cream {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    color: var(--color-espresso);
+    background: var(--color-foam);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+  }
+
+  .btn-cream:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Dark espresso background with slow-drifting warm light, like sun on water */
+  .water-bg {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: var(--color-cream);
+    background: radial-gradient(120% 90% at 20% 0%, #4a2f20 0%, #2b1b14 48%, #1e130e 100%);
+  }
+
+  .water-bg::before,
+  .water-bg::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+  }
+
+  .water-bg::before {
+    width: 46vmax;
+    height: 46vmax;
+    left: -12vmax;
+    top: -16vmax;
+    background: radial-gradient(circle, rgba(200, 162, 122, 0.5), transparent 66%);
+    animation: pn-drift 26s ease-in-out infinite alternate;
+  }
+
+  .water-bg::after {
+    width: 38vmax;
+    height: 38vmax;
+    right: -10vmax;
+    bottom: -18vmax;
+    background: radial-gradient(circle, rgba(217, 160, 102, 0.38), transparent 66%);
+    animation: pn-drift 32s ease-in-out infinite alternate-reverse;
+  }
+
+  /* Soft expanding rings. Place a few absolutely-positioned spans with this class. */
+  .ripple-ring {
+    position: absolute;
+    border-radius: 9999px;
+    border: 1px solid rgba(245, 235, 221, 0.28);
+    animation: pn-ripple 7s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    pointer-events: none;
+  }
+
+  .float-slow {
+    animation: pn-float 8s ease-in-out infinite;
+  }
+
+  /* Active nav link (react-router NavLink adds the "active" class) */
+  .active {
+    color: var(--color-caramel);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+    text-decoration-color: var(--color-caramel);
+  }
+}
+
+@keyframes pn-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(8vmax, 6vmax, 0) scale(1.18);
+  }
+}
+
+@keyframes pn-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(1.5deg);
+  }
+}
+
+@keyframes pn-ripple {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Keep browser autofill from turning dark glass inputs white */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f5ebdd;
+  caret-color: #f5ebdd;
+  transition: background-color 9999s ease-in-out 0s;
+  box-shadow: 0 0 0 1000px rgba(60, 40, 30, 0.9) inset;
+}
