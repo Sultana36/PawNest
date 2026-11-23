@@ -34,7 +34,7 @@ import DashboardRedirect from './Components/DashboardRedirect';
 
 import Success from './Components/Success';
 import PrivateRoute from './Components/PrivateRoute';
-import Addproduct from './Components/User/Addproduct';
+import Addproduct from './Components/User/AddProduct';
 import MngProducts from './Components/Admin/MngProducts';
 import PetAccesories from './Components/PetAccesories';
 import Mycart from './Components/User/Mycart';
