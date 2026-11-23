@@ -9,10 +9,13 @@ import 'react-toastify/dist/ReactToastify.css';
 const Addpet = () => {
   const { user } = useContext(AuthContext);
   const [uploading, setUploading] = useState(false);
+  const [customCategory, setCustomCategory] = useState('');
   const [petData, setPetData] = useState({
     name: '', age: '', category: '', location: '', description: '', image: '',
     userName: user?.displayName, userEmail: user?.email,
   });
+
+  const isOther = petData.category === 'Other';
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -29,10 +32,18 @@ const Addpet = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const finalCategory = isOther ? customCategory.trim() : petData.category;
+    if (!finalCategory) {
+      toast.error("Please type the pet category.");
+      return;
+    }
+
     try {
-      await axios.post(`${API_URL}/pet-list`, { ...petData, addedAt: new Date().toISOString(), adopted: false });
+      await axios.post(`${API_URL}/pet-list`, { ...petData, category: finalCategory, addedAt: new Date().toISOString(), adopted: false });
       toast.success('Pet listing submitted!', { position: 'top-center' });
       setPetData({ name: '', age: '', category: '', location: '', description: '', image: '', userEmail: user?.email || '' });
+      setCustomCategory('');
     } catch (err) { toast.error('Failed to add pet.'); }
   };
 
@@ -52,11 +63,17 @@ const Addpet = () => {
             <input type="text" placeholder="Age (e.g. 2 years)" value={petData.age} onChange={(e) => setPetData({...petData, age: e.target.value})} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm" required />
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
-            <select value={petData.category} onChange={(e) => setPetData({...petData, category: e.target.value})} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm" required>
-              <option value="" disabled>Select Category</option>
-              <option value="Cat">Cat</option><option value="Dog">Dog</option><option value="Rabbit">Rabbit</option>
-            </select>
-            <input type="text" placeholder="Location" value={petData.location} onChange={(e) => setPetData({...petData, location: e.target.value})} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm" required />
+            <div className="space-y-3">
+              <select value={petData.category} onChange={(e) => setPetData({...petData, category: e.target.value})} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm" required>
+                <option value="" disabled>Select Category</option>
+                <option value="Cat">Cat</option><option value="Dog">Dog</option><option value="Rabbit">Rabbit</option>
+                <option value="Other">Other (type your own)</option>
+              </select>
+              {isOther && (
+                <input type="text" placeholder="Type the category (e.g. Bird, Hamster)" value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm" required />
+              )}
+            </div>
+            <input type="text" placeholder="Location" value={petData.location} onChange={(e) => setPetData({...petData, location: e.target.value})} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm h-fit" required />
           </div>
           <textarea placeholder="Describe the pet's personality..." value={petData.description} onChange={(e) => setPetData({...petData, description: e.target.value})} className="w-full rounded-2xl border border-espresso/20 bg-white/80 px-5 py-4 text-espresso outline-none focus:border-coffee shadow-sm" rows="4" required></textarea>
           <button type="submit" disabled={uploading} className="w-full rounded-2xl bg-coffee py-4 font-display text-lg font-semibold text-foam shadow-xl transition-all hover:bg-espresso hover:shadow-2xl active:scale-[0.98] disabled:opacity-50">

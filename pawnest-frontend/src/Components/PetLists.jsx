@@ -6,6 +6,8 @@ import { FiSearch, FiArrowUpRight, FiMapPin, FiCalendar } from "react-icons/fi";
 import { API_URL } from "../api";
 import PhotoFrame from "./Shared/PhotoFrame";
 
+const defaultCategories = ["Cat", "Dog", "Rabbit", "Fish", "Bird"];
+
 const PetLists = () => {
   const [pets, setPets] = useState([]);
   const [filteredPets, setFilteredPets] = useState([]);
@@ -22,18 +24,29 @@ const PetLists = () => {
       .catch(err => console.error('Failed to fetch pets:', err));
   }, []);
 
+  // Default categories plus any custom ones that pets actually use (e.g. Hamster)
+  const categoryOptions = [...defaultCategories];
+  pets.forEach((pet) => {
+    const c = (pet.category || "").trim();
+    if (c && !categoryOptions.some((o) => o.toLowerCase() === c.toLowerCase())) {
+      categoryOptions.push(c);
+    }
+  });
+
   useEffect(() => {
     let filtered = pets;
 
     if (searchTerm) {
+      const term = searchTerm.trim().toLowerCase();
       filtered = filtered.filter(pet =>
-        pet.name.toLowerCase().includes(searchTerm.toLowerCase())
+        (pet.name || "").toLowerCase().includes(term) ||
+        (pet.category || "").toLowerCase().includes(term)
       );
     }
 
     if (selectedCategory) {
       filtered = filtered.filter(pet =>
-        pet.category.toLowerCase() === selectedCategory.toLowerCase()
+        (pet.category || "").toLowerCase() === selectedCategory.toLowerCase()
       );
     }
 
@@ -60,7 +73,7 @@ const PetLists = () => {
           <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-espresso/40" size={18} />
           <input
             type="text"
-            placeholder="Search by pet name..."
+            placeholder="Search by pet name or category..."
             className="w-full rounded-2xl border border-espresso/15 bg-white/40 py-3 pl-11 pr-4 text-espresso placeholder:text-espresso/40 outline-none transition focus:border-caramel focus:bg-white/70"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -73,11 +86,9 @@ const PetLists = () => {
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
           <option value="">All Categories</option>
-          <option value="Cat">Cat</option>
-          <option value="Dog">Dog</option>
-          <option value="Rabbit">Rabbit</option>
-          <option value="Fish">Fish</option>
-          <option value="Bird">Bird</option>
+          {categoryOptions.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
         </select>
       </div>
 

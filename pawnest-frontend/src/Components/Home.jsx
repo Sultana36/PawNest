@@ -514,7 +514,7 @@ const Home = () => {
 
       {/* what people say */}
       <section className="mx-auto max-w-7xl px-6 py-24">
-        <h2 className="font-display text-4xl font-medium text-espresso sm:text-5xl">What people say</h2>
+        <h2 className="font-display text-4xl font-medium text-espresso sm:text-5xl">What adopters could say</h2>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
           {feedback.map((person, index) => (
