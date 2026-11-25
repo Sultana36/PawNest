@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { motion } from "framer-motion";
 import { FiSearch, FiArrowUpRight, FiMapPin, FiCalendar } from "react-icons/fi";
 import { API_URL } from "../api";
@@ -8,12 +8,18 @@ import PhotoFrame from "./Shared/PhotoFrame";
 
 const defaultCategories = ["Cat", "Dog", "Rabbit", "Fish", "Bird"];
 
+// "Others" on the home page means every pet that is not one of these four
+const mainCategories = ["cat", "dog", "rabbit", "fish"];
+
 const PetLists = () => {
   const [pets, setPets] = useState([]);
   const [filteredPets, setFilteredPets] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // Category comes from the URL, e.g. /petlist?category=dog
+  const selectedCategory = (searchParams.get("category") || "").toLowerCase();
 
   useEffect(() => {
     axios.get(`${API_URL}/pet-list`)
@@ -28,7 +34,13 @@ const PetLists = () => {
   const categoryOptions = [...defaultCategories];
   pets.forEach((pet) => {
     const c = (pet.category || "").trim();
-    if (c && !categoryOptions.some((o) => o.toLowerCase() === c.toLowerCase())) {
+    const lower = c.toLowerCase();
+    if (
+      c &&
+      lower !== "other" &&
+      lower !== "others" &&
+      !categoryOptions.some((o) => o.toLowerCase() === lower)
+    ) {
       categoryOptions.push(c);
     }
   });
@@ -44,14 +56,26 @@ const PetLists = () => {
       );
     }
 
-    if (selectedCategory) {
+    if (selectedCategory === "others") {
       filtered = filtered.filter(pet =>
-        (pet.category || "").toLowerCase() === selectedCategory.toLowerCase()
+        !mainCategories.includes((pet.category || "").trim().toLowerCase())
+      );
+    } else if (selectedCategory) {
+      filtered = filtered.filter(pet =>
+        (pet.category || "").trim().toLowerCase() === selectedCategory
       );
     }
 
     setFilteredPets(filtered);
   }, [searchTerm, selectedCategory, pets]);
+
+  const handleCategoryChange = (value) => {
+    if (value) {
+      setSearchParams({ category: value });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const handleViewDetails = (id) => {
     navigate(`/petlist/${id}`);
@@ -83,12 +107,13 @@ const PetLists = () => {
         <select
           className="rounded-2xl border border-espresso/15 bg-white/40 px-4 py-3 text-espresso outline-none transition focus:border-caramel focus:bg-white/70 md:w-64"
           value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          onChange={(e) => handleCategoryChange(e.target.value)}
         >
           <option value="">All Categories</option>
           {categoryOptions.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+            <option key={cat} value={cat.toLowerCase()}>{cat}</option>
           ))}
+          <option value="others">Others</option>
         </select>
       </div>
 

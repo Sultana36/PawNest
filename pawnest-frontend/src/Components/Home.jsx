@@ -42,11 +42,11 @@ const PhotoFallback = () => (
 );
 
 const categories = [
-  { name: 'Cats', icon: FaCat },
-  { name: 'Dogs', icon: FaDog },
-  { name: 'Rabbits', icon: GiRabbit },
-  { name: 'Fish', icon: FaFish },
-  { name: 'Others', icon: FaPaw },
+  { name: 'Cats', value: 'cat', icon: FaCat },
+  { name: 'Dogs', value: 'dog', icon: FaDog },
+  { name: 'Rabbits', value: 'rabbit', icon: GiRabbit },
+  { name: 'Fish', value: 'fish', icon: FaFish },
+  { name: 'Others', value: 'others', icon: FaPaw },
 ];
 
 const ways = [
@@ -427,7 +427,7 @@ const Home = () => {
             {categories.map((cat) => (
               <Link
                 key={cat.name}
-                to="/petlist"
+                to={`/petlist?category=${cat.value}`}
                 className="glass-light glass-lift flex flex-col items-center rounded-3xl p-7"
               >
                 <span className="grid h-16 w-16 place-items-center rounded-full bg-coffee text-cream">
